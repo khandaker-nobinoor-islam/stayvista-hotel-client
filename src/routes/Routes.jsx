@@ -5,6 +5,18 @@ import ErrorPage from '../pages/ErrorPage'
 import Login from '../pages/Login/Login'
 import SignUp from '../pages/SignUp/SignUp'
 import RoomDetails from '../pages/RoomDetails/RoomDetails'
+import PrivateRoute from './PrivateRoute'
+import { getRoom } from '../api/rooms'
+import DashboardLayout from '../layouts/DashboardLayout'
+import AddRoom from '../pages/Dashboard/Host/AddRoom'
+import MyListings from '../pages/Dashboard/Host/MyListings'
+import AdminRoute from './AdminRoute'
+import ManageUsers from '../pages/Dashboard/Admin/ManageUsers'
+import HostRoutes from './HostRoutes'
+import Profile from '../pages/Dashboard/Common/Profile'
+import MyBookings from '../pages/Dashboard/Guest/MyBookings'
+import ManageBookings from '../pages/Dashboard/Host/ManageBookings'
+import Statistics from '../pages/Dashboard/Common/Statistics'
 
 export const router = createBrowserRouter([
   {
@@ -18,10 +30,59 @@ export const router = createBrowserRouter([
       },
       {
         path: '/room/:id',
-        element: <RoomDetails></RoomDetails>
+        element: <PrivateRoute><RoomDetails></RoomDetails></PrivateRoute>,
+        loader: ({ params }) => getRoom(params.id)
       },
     ],
   },
+
   { path: '/login', element: <Login /> },
   { path: '/signup', element: <SignUp /> },
+
+  { 
+    path: '/dashboard',
+     element: <DashboardLayout></DashboardLayout>,
+    children: [
+      {
+        index: true,
+        element: <PrivateRoute><Statistics></Statistics></PrivateRoute>
+      },
+      {
+        path: 'add-room',
+        element: 
+        <PrivateRoute>
+          {/* <AddRoom></AddRoom> */}
+           <HostRoutes><AddRoom></AddRoom></HostRoutes>
+        </PrivateRoute>
+        
+      },
+      {
+        path: 'my-listing',
+        element: 
+        <PrivateRoute>
+          {/* <MyListings></MyListings> */}
+          <HostRoutes><MyListings></MyListings></HostRoutes>
+        </PrivateRoute>
+      },
+      {
+        path: 'manage-users',
+        element: 
+        <PrivateRoute>
+          {/* <ManageUsers></ManageUsers> */}
+          <AdminRoute><ManageUsers></ManageUsers></AdminRoute>
+        </PrivateRoute>
+      },
+      {
+        path: 'profile',
+        element: <PrivateRoute><Profile></Profile></PrivateRoute>
+      },
+      {
+        path: 'my-bookings',
+        element: <PrivateRoute><MyBookings></MyBookings></PrivateRoute>
+      },
+      {
+        path: 'manage-bookings',
+        element: <HostRoutes><ManageBookings></ManageBookings></HostRoutes>
+      },
+  ] },
 ])
